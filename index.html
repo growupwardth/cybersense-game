@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Alert</title>
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        body { 
+            background-color: #111; 
+            color: white; 
+            text-align: center; 
+            font-family: sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0; 
+        }
+        /* เอฟเฟกต์จอแดงกระพริบตอนโดนแฮ็ก */
+        .hacked-mode { 
+            animation: blink 0.5s infinite; 
+        }
+        @keyframes blink { 
+            0% { background-color: #111; }
+            50% { background-color: #ff0000; }
+            100% { background-color: #111; }
+        }
+        button { 
+            padding: 20px 40px; 
+            font-size: 24px; 
+            font-weight: bold;
+            background: #00ffcc; 
+            color: #000; 
+            border: none; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            box-shadow: 0 0 15px #00ffcc;
+        }
+        #result { display: none; }
+        h1 { font-size: 40px; color: white; text-shadow: 2px 2px 10px black; }
+        p { font-size: 20px; }
+    </style>
+</head>
+<body>
+
+    <div id="startScreen">
+        <h2>ระบบกำลังวิเคราะห์ลิงก์...</h2>
+        <button onclick="triggerHack()">กดเพื่อดูผลลัพธ์</button>
+    </div>
+
+    <div id="result">
+        <h1>🚨 SYSTEM HACKED! 🚨</h1>
+        <p>คุณโดนขโมยข้อมูล! เสีย 2 เหรียญ<br>กำลังพากลับไปกู้ระบบ...</p>
+    </div>
+
+    <audio id="sirenSound" src="https://www.soundjay.com/buttons/sounds/beep-01a.mp3"></audio>
+
+    <script>
+        // 1. ใส่ LIFF ID ที่ได้จาก LINE Developers
+        const myLiffId = "ใส่_LIFF_ID_ของคุณที่นี่";
+
+        // เริ่มต้นระบบ LIFF
+        liff.init({ liffId: myLiffId }).catch(err => console.error(err));
+
+        function triggerHack() {
+            // เปลี่ยนหน้าจอให้กระพริบสีแดง
+            document.body.classList.add("hacked-mode");
+            document.getElementById("startScreen").style.display = "none";
+            document.getElementById("result").style.display = "block";
+
+            // สั่งเล่นเสียงไซเรน
+            document.getElementById("sirenSound").play();
+
+            // ส่งข้อความ 'Fake_01' เข้าไปในแชทหา Dify
+            if (liff.isLoggedIn()) {
+                liff.sendMessages([{
+                    type: 'text',
+                    text: 'Fake_01'
+                }]).then(() => {
+                    // รอ 3 วินาทีให้เสียงดังและจอแดงกระพริบ แล้วปิดหน้าต่างนี้อัตโนมัติ
+                    setTimeout(() => {
+                        liff.closeWindow();
+                    }, 3000);
+                }).catch(err => console.error("Error sending message:", err));
+            }
+        }
+    </script>
+</body>
+</html>
