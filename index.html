@@ -10,7 +10,7 @@
             background-color: #111; 
             color: white; 
             text-align: center; 
-            font-family: 'Courier New', Courier, monospace; 
+            font-family: sans-serif; 
             display: flex; 
             flex-direction: column; 
             justify-content: center; 
@@ -18,7 +18,16 @@
             margin: 0; 
             overflow: hidden;
         }
-        /* ด่าน 1: ปุ่มกด */
+
+        /* --- เอฟเฟกต์จอแดงกระพริบตอนโดนแฮ็ก --- */
+        .hacked-mode { animation: blink 0.5s infinite; }
+        @keyframes blink { 
+            0% { background-color: #111; }
+            50% { background-color: #ff0000; }
+            100% { background-color: #111; }
+        }
+
+        /* --- ด่าน 1: ปุ่มกดเริ่ม --- */
         #startScreen { display: block; }
         button { 
             padding: 20px 40px; 
@@ -32,19 +41,13 @@
             box-shadow: 0 0 15px #00ffcc;
         }
 
-        /* ด่าน 2: เอฟเฟกต์จอแดงกระพริบ */
+        /* --- ด่าน 2: หน้าจอไซเรน --- */
         #sirenScreen { display: none; }
-        .hacked-mode { animation: blink 0.5s infinite; }
-        @keyframes blink { 
-            0% { background-color: #111; }
-            50% { background-color: #ff0000; }
-            100% { background-color: #111; }
-        }
-        h1 { font-size: 40px; color: white; text-shadow: 2px 2px 10px black; margin-bottom: 10px;}
+        h1 { font-size: 40px; color: white; text-shadow: 2px 2px 10px black; }
         p { font-size: 20px; }
 
-        /* ด่าน 3: หน้าจอโอนเงิน (Bank Hack) */
-        #bankHackScreen { display: none; padding: 20px; width: 100%; box-sizing: border-box; }
+        /* --- ด่าน 3: หน้าจอโอนเงิน (Bank Hack) --- */
+        #bankHackScreen { display: none; padding: 20px; width: 100%; box-sizing: border-box; font-family: 'Courier New', Courier, monospace;}
         .alert-bank { color: #ff0000; font-size: 28px; font-weight: bold; animation: textBlink 0.8s infinite; margin-bottom: 20px;}
         @keyframes textBlink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
         .box { border: 2px solid #ff0000; padding: 20px; border-radius: 10px; background-color: #000; margin: 0 auto; max-width: 400px; }
@@ -57,20 +60,20 @@
 <body>
 
     <div id="startScreen">
-        <h2 style="font-family: sans-serif;">ระบบกำลังวิเคราะห์ลิงก์...</h2>
+        <h2>ระบบกำลังวิเคราะห์ลิงก์...</h2>
         <button onclick="triggerHack()">กดเพื่อดูผลลัพธ์</button>
     </div>
 
     <div id="sirenScreen">
         <h1>🚨 SYSTEM HACKED! 🚨</h1>
-        <p>กำลังถูกเจาะระบบรักษาความปลอดภัย...</p>
+        <p>คุณโดนขโมยข้อมูล!<br>กำลังถูกเจาะระบบรักษาความปลอดภัย...</p>
     </div>
 
     <div id="bankHackScreen">
         <div class="alert-bank">⚠️ UNAUTHORIZED TRANSFER ⚠️</div>
         <div class="box">
-            <p style="color:#0f0; margin-top: 0;">Access Granted: Bank App</p>
-            <p>บัญชีปลายทาง:<br><span style="color:red; font-size: 24px; font-weight: bold;">UNKNOWN_HACKER</span></p>
+            <p style="color:#0f0; margin-top: 0; font-size: 16px;">Access Granted: Bank App</p>
+            <p style="font-size: 16px;">บัญชีปลายทาง:<br><span style="color:red; font-size: 24px; font-weight: bold;">UNKNOWN_HACKER</span></p>
             <div class="money">ยอดโอน: 50,000.00 THB</div>
             <div class="progress-bg"><div class="progress-bar" id="hackBar"></div></div>
             <p id="status" class="status-text">Bypassing security... 10%</p>
@@ -80,8 +83,10 @@
     <audio id="sirenSound" src="siren.mp3"></audio>
 
     <script>
-        // 1. ใส่ LIFF ID ที่ได้จาก LINE Developers
+        // 1. LIFF ID ของคุณ
         const myLiffId = "2009476273-YJ8XRohz";
+
+        // เริ่มต้นระบบ LIFF
         liff.init({ liffId: myLiffId }).catch(err => console.error(err));
 
         function triggerHack() {
@@ -98,9 +103,9 @@
                 liff.sendMessages([{ type: 'text', text: 'Fake_01' }]).catch(err => console.error("Error sending message:", err));
             }
 
-            // รอ 3 วินาที แล้วให้เปลี่ยนเป็นหน้า "โอนเงิน"
+            // รอ 3 วินาที (ให้ไซเรนดังจบ) แล้วเปลี่ยนเป็นหน้า "โอนเงิน"
             setTimeout(() => {
-                // ปิดจอแดงกระพริบ ซ่อนหน้าไซเรน
+                // ปิดจอแดงกระพริบ และซ่อนหน้าไซเรน
                 document.body.classList.remove("hacked-mode");
                 document.body.style.backgroundColor = "#000"; // เปลี่ยนพื้นหลังให้ดำสนิท
                 document.getElementById("sirenScreen").style.display = "none";
@@ -108,7 +113,7 @@
                 // โชว์หน้าโอนเงิน (Bank Hack)
                 document.getElementById("bankHackScreen").style.display = "block";
 
-                // เริ่มอนิเมชันหลอดโหลด
+                // เริ่มอนิเมชันหลอดโหลดโอนเงิน
                 setTimeout(() => { document.getElementById('hackBar').style.width = '95%'; }, 100);
                 let count = 10;
                 let interval = setInterval(() => {
